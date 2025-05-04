@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.share.system.mapper.EvaluteMapper">
+    
+    <resultMap type="Evalute" id="EvaluteResult">
+        <result property="id"    column="id"    />
+        <result property="content"    column="content"    />
+        <result property="status"    column="status"    />
+        <result property="userId"    column="user_id"    />
+        <result property="goodId"    column="good_id"    />
+    </resultMap>
+
+    <sql id="selectEvaluteVo">
+        select id, content, status, user_id, good_id from evalute
+    </sql>
+
+    <select id="selectEvaluteList" parameterType="Evalute" resultMap="EvaluteResult">
+        <include refid="selectEvaluteVo"/>
+        <where>  
+            <if test="status != null "> and status = #{status}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="goodId != null "> and good_id = #{goodId}</if>
+        </where>
+    </select>
+    
+    <select id="selectEvaluteById" parameterType="String" resultMap="EvaluteResult">
+        <include refid="selectEvaluteVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertEvalute" parameterType="Evalute" useGeneratedKeys="true" keyProperty="id">
+        insert into evalute
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="content != null">content,</if>
+            <if test="status != null">status,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="goodId != null">good_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="content != null">#{content},</if>
+            <if test="status != null">#{status},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="goodId != null">#{goodId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateEvalute" parameterType="Evalute">
+        update evalute
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="content != null">content = #{content},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="goodId != null">good_id = #{goodId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteEvaluteById" parameterType="String">
+        delete from evalute where id = #{id}
+    </delete>
+
+    <delete id="deleteEvaluteByIds" parameterType="String">
+        delete from evalute where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

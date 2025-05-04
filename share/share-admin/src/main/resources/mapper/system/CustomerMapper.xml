@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.share.system.mapper.CustomerMapper">
+    
+    <resultMap type="Customer" id="CustomerResult">
+        <result property="cusId"    column="cus_id"    />
+        <result property="name"    column="name"    />
+        <result property="phone"    column="phone"    />
+        <result property="password"    column="password"    />
+        <result property="sex"    column="sex"    />
+    </resultMap>
+
+    <sql id="selectCustomerVo">
+        select cus_id, name, phone, password, sex from customer
+    </sql>
+
+    <select id="selectCustomerList" parameterType="Customer" resultMap="CustomerResult">
+        <include refid="selectCustomerVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="password != null  and password != ''"> and password = #{password}</if>
+            <if test="sex != null "> and sex = #{sex}</if>
+        </where>
+    </select>
+    
+    <select id="selectCustomerByCusId" parameterType="String" resultMap="CustomerResult">
+        <include refid="selectCustomerVo"/>
+        where cus_id = #{cusId}
+    </select>
+
+    <insert id="insertCustomer" parameterType="Customer" useGeneratedKeys="true" keyProperty="cusId">
+        insert into customer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="phone != null">phone,</if>
+            <if test="password != null">password,</if>
+            <if test="sex != null">sex,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="password != null">#{password},</if>
+            <if test="sex != null">#{sex},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCustomer" parameterType="Customer">
+        update customer
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="password != null">password = #{password},</if>
+            <if test="sex != null">sex = #{sex},</if>
+        </trim>
+        where cus_id = #{cusId}
+    </update>
+
+    <delete id="deleteCustomerByCusId" parameterType="String">
+        delete from customer where cus_id = #{cusId}
+    </delete>
+
+    <delete id="deleteCustomerByCusIds" parameterType="String">
+        delete from customer where cus_id in 
+        <foreach item="cusId" collection="array" open="(" separator="," close=")">
+            #{cusId}
+        </foreach>
+    </delete>
+</mapper>

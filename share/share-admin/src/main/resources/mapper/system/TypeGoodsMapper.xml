@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.share.system.mapper.TypeGoodsMapper">
+    
+    <resultMap type="TypeGoods" id="TypeGoodsResult">
+        <result property="id"    column="id"    />
+        <result property="goodType"    column="good_type"    />
+        <result property="img"    column="img"    />
+    </resultMap>
+
+    <sql id="selectTypeGoodsVo">
+        select id, good_type, img from type_goods
+    </sql>
+
+    <select id="selectTypeGoodsList" parameterType="TypeGoods" resultMap="TypeGoodsResult">
+        <include refid="selectTypeGoodsVo"/>
+        <where>  
+            <if test="goodType != null  and goodType != ''"> and good_type = #{goodType}</if>
+        </where>
+    </select>
+    
+    <select id="selectTypeGoodsById" parameterType="String" resultMap="TypeGoodsResult">
+        <include refid="selectTypeGoodsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTypeGoods" parameterType="TypeGoods" useGeneratedKeys="true" keyProperty="id">
+        insert into type_goods
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="goodType != null">good_type,</if>
+            <if test="img != null">img,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="goodType != null">#{goodType},</if>
+            <if test="img != null">#{img},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTypeGoods" parameterType="TypeGoods">
+        update type_goods
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="goodType != null">good_type = #{goodType},</if>
+            <if test="img != null">img = #{img},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTypeGoodsById" parameterType="String">
+        delete from type_goods where id = #{id}
+    </delete>
+
+    <delete id="deleteTypeGoodsByIds" parameterType="String">
+        delete from type_goods where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

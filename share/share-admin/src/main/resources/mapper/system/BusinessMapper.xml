@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.share.system.mapper.BusinessMapper">
+    
+    <resultMap type="Business" id="BusinessResult">
+        <result property="busId"    column="bus_id"    />
+        <result property="busName"    column="bus_name"    />
+        <result property="busSex"    column="bus_sex"    />
+        <result property="busPhone"    column="bus_phone"    />
+        <result property="password"    column="password"    />
+    </resultMap>
+
+    <sql id="selectBusinessVo">
+        select bus_id, bus_name, bus_sex, bus_phone, password from business
+    </sql>
+
+    <select id="selectBusinessList" parameterType="Business" resultMap="BusinessResult">
+        <include refid="selectBusinessVo"/>
+        <where>  
+            <if test="busName != null  and busName != ''"> and bus_name like concat('%', #{busName}, '%')</if>
+            <if test="busSex != null "> and bus_sex = #{busSex}</if>
+            <if test="busPhone != null  and busPhone != ''"> and bus_phone = #{busPhone}</if>
+            <if test="password != null  and password != ''"> and password = #{password}</if>
+        </where>
+    </select>
+    
+    <select id="selectBusinessByBusId" parameterType="String" resultMap="BusinessResult">
+        <include refid="selectBusinessVo"/>
+        where bus_id = #{busId}
+    </select>
+
+    <insert id="insertBusiness" parameterType="Business" useGeneratedKeys="true" keyProperty="busId">
+        insert into business
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="busName != null">bus_name,</if>
+            <if test="busSex != null">bus_sex,</if>
+            <if test="busPhone != null">bus_phone,</if>
+            <if test="password != null">password,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="busName != null">#{busName},</if>
+            <if test="busSex != null">#{busSex},</if>
+            <if test="busPhone != null">#{busPhone},</if>
+            <if test="password != null">#{password},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusiness" parameterType="Business">
+        update business
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="busName != null">bus_name = #{busName},</if>
+            <if test="busSex != null">bus_sex = #{busSex},</if>
+            <if test="busPhone != null">bus_phone = #{busPhone},</if>
+            <if test="password != null">password = #{password},</if>
+        </trim>
+        where bus_id = #{busId}
+    </update>
+
+    <delete id="deleteBusinessByBusId" parameterType="String">
+        delete from business where bus_id = #{busId}
+    </delete>
+
+    <delete id="deleteBusinessByBusIds" parameterType="String">
+        delete from business where bus_id in 
+        <foreach item="busId" collection="array" open="(" separator="," close=")">
+            #{busId}
+        </foreach>
+    </delete>
+</mapper>

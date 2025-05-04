@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.share.system.mapper.AddressMapper">
+    
+    <resultMap type="Address" id="AddressResult">
+        <result property="addressId"    column="addressId"    />
+        <result property="userId"    column="userId"    />
+        <result property="userAddress"    column="userAddress"    />
+    </resultMap>
+
+    <sql id="selectAddressVo">
+        select addressId, userId, userAddress from address
+    </sql>
+
+    <select id="selectAddressList" parameterType="Address" resultMap="AddressResult">
+        <include refid="selectAddressVo"/>
+        <where>  
+            <if test="userId != null "> and userId = #{userId}</if>
+        </where>
+    </select>
+    
+    <select id="selectAddressByAddressId" parameterType="Long" resultMap="AddressResult">
+        <include refid="selectAddressVo"/>
+        where addressId = #{addressId}
+    </select>
+
+    <insert id="insertAddress" parameterType="Address" useGeneratedKeys="true" keyProperty="addressId">
+        insert into address
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">userId,</if>
+            <if test="userAddress != null">userAddress,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="userAddress != null">#{userAddress},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAddress" parameterType="Address">
+        update address
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">userId = #{userId},</if>
+            <if test="userAddress != null">userAddress = #{userAddress},</if>
+        </trim>
+        where addressId = #{addressId}
+    </update>
+
+    <delete id="deleteAddressByAddressId" parameterType="Long">
+        delete from address where addressId = #{addressId}
+    </delete>
+
+    <delete id="deleteAddressByAddressIds" parameterType="String">
+        delete from address where addressId in 
+        <foreach item="addressId" collection="array" open="(" separator="," close=")">
+            #{addressId}
+        </foreach>
+    </delete>
+</mapper>

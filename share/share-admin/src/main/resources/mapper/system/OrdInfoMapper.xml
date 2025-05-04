@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.share.system.mapper.OrdInfoMapper">
+    
+    <resultMap type="OrdInfo" id="OrdInfoResult">
+        <result property="id"    column="id"    />
+        <result property="orderId"    column="order_id"    />
+        <result property="goodId"    column="good_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="buildTime"    column="build_time"    />
+        <result property="overTime"    column="over_time"    />
+        <result property="status"    column="status"    />
+        <result property="sendTime"    column="send_time"    />
+        <result property="expressId"    column="express_id"    />
+        <result property="time"    column="time"    />
+        <result property="address"    column="address"    />
+        <result property="price"    column="price"    />
+        <result property="busName"    column="bus_name"    />
+        <result property="userExpressId"    column="user_express_id"    />
+    </resultMap>
+
+    <sql id="selectOrdInfoVo">
+        select id, order_id, good_id, user_id, build_time, over_time, status, send_time, express_id, time, address, price, bus_name, user_express_id from ord_info
+    </sql>
+
+    <select id="selectOrdInfoList" parameterType="OrdInfo" resultMap="OrdInfoResult">
+        <include refid="selectOrdInfoVo"/>
+        <where>  
+            <if test="goodId != null "> and good_id = #{goodId}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="busName != null  and busName != ''"> and bus_name like concat('%', #{busName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectOrdInfoById" parameterType="String" resultMap="OrdInfoResult">
+        <include refid="selectOrdInfoVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertOrdInfo" parameterType="OrdInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into ord_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">order_id,</if>
+            <if test="goodId != null">good_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="buildTime != null">build_time,</if>
+            <if test="overTime != null">over_time,</if>
+            <if test="status != null">status,</if>
+            <if test="sendTime != null">send_time,</if>
+            <if test="expressId != null">express_id,</if>
+            <if test="time != null">time,</if>
+            <if test="address != null">address,</if>
+            <if test="price != null">price,</if>
+            <if test="busName != null">bus_name,</if>
+            <if test="userExpressId != null">user_express_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">#{orderId},</if>
+            <if test="goodId != null">#{goodId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="buildTime != null">#{buildTime},</if>
+            <if test="overTime != null">#{overTime},</if>
+            <if test="status != null">#{status},</if>
+            <if test="sendTime != null">#{sendTime},</if>
+            <if test="expressId != null">#{expressId},</if>
+            <if test="time != null">#{time},</if>
+            <if test="address != null">#{address},</if>
+            <if test="price != null">#{price},</if>
+            <if test="busName != null">#{busName},</if>
+            <if test="userExpressId != null">#{userExpressId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateOrdInfo" parameterType="OrdInfo">
+        update ord_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderId != null">order_id = #{orderId},</if>
+            <if test="goodId != null">good_id = #{goodId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="buildTime != null">build_time = #{buildTime},</if>
+            <if test="overTime != null">over_time = #{overTime},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="sendTime != null">send_time = #{sendTime},</if>
+            <if test="expressId != null">express_id = #{expressId},</if>
+            <if test="time != null">time = #{time},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="busName != null">bus_name = #{busName},</if>
+            <if test="userExpressId != null">user_express_id = #{userExpressId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteOrdInfoById" parameterType="String">
+        delete from ord_info where id = #{id}
+    </delete>
+
+    <delete id="deleteOrdInfoByIds" parameterType="String">
+        delete from ord_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
